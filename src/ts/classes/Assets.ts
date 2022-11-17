@@ -4,8 +4,8 @@ export class Assets {
 
     bucket = [];
 
-    public add ( path: string ) {
-        this.bucket.push(AssetsPixi.load(path));
+    public add ( path: string, name?: string ) {
+        AssetsPixi.add(name, path);
     }
 
     public onLoad (): Promise<void> {
