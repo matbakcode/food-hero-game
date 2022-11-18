@@ -1,6 +1,11 @@
 import * as PIXI from "pixi.js";
 import state from "./state";
 
-const app = new PIXI.Application({width: state.get().stage.width, height:state.get().stage.height, backgroundColor : 0x000000});
+const app$ = new PIXI.Application({
+    width: state.get().stage.width,
+    height:state.get().stage.height,
+    backgroundColor : 0x000000,
+    antialias: true,
+});
 
-export default app;
+export default app$;

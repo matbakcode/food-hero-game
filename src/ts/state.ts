@@ -1,5 +1,5 @@
 import {initialState, State} from "./classes/State";
 
-const state = new State( initialState );
+const state$ = new State( initialState );
 
-export default state;
+export default state$;

@@ -1,9 +1,12 @@
+import {Stage} from "./stages/Stage";
+
 export enum MovementVector {
     LEFT = "left", RIGHT = "right", FRONT = "front"
 }
 
 export interface StateInterface {
     stage: {
+        current: Stage | undefined,
         width: number,
         height: number,
     },
@@ -16,44 +19,52 @@ export interface StateInterface {
 
 export const initialState = <StateInterface>{
     stage: {
+        current: undefined,
         width: 1200,
         height: 800,
     },
-  controls: {
-      speed: 3,
-      isMoving: false,
-      vector: MovementVector.FRONT,
-  }
+    controls: {
+        speed: 3,
+        isMoving: false,
+        vector: MovementVector.FRONT,
+    }
 };
-
 
 
 export class State {
 
     state: StateInterface;
 
-    constructor (initialState: StateInterface) {
+    constructor(initialState: StateInterface) {
         this.state = initialState;
     }
 
-    public get () {
+    public get() {
         return this.state;
     }
 
-    public setControlVector (vector: MovementVector) {
+    public setControlVector(vector: MovementVector) {
         this.state.controls.vector = vector;
     }
 
-    public setIsMoving (isMoving) {
+    public setIsMoving(isMoving) {
         this.state.controls.isMoving = isMoving;
     }
 
-    public getControlsIsMoving () {
+    public getControlsIsMoving() {
         return this.state.controls.isMoving;
     }
 
-    public getControlsVector () {
+    public getControlsVector() {
         return this.state.controls.vector;
+    }
+
+    public setSceneCurrent (stage: Stage) {
+        this.state.stage.current = stage;
+    }
+
+    public getStageCurrent (): Stage {
+        return this.state.stage.current;
     }
 }
 
