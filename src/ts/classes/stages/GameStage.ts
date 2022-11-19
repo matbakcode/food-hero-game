@@ -1,12 +1,9 @@
 import {Stage} from "./Stage";
 import {World} from "../World";
 import {Controls} from "../Controls";
-import {Hero} from "../Hero";
-import ticker from "../../ticker";
-import app$ from "../../app";
 import hero$ from "../../hero";
-import ticker$ from "../../ticker";
 import {Enemies} from "../Enemies";
+import statistics$ from "../../statistics";
 
 export class GameStage extends Stage {
     controls: Controls;
@@ -20,20 +17,24 @@ export class GameStage extends Stage {
 
     public build () {
         console.log("Build Game");
+
         this.world = new World();
-        this.world.build();
+        this.world.build().then(() => {
 
-        this.enemies = new Enemies();
-        this.enemies.build();
+            this.enemies = new Enemies();
+            this.enemies.build();
+
+            statistics$.build();
+
+            this.start();
+
+        });
 
 
-        this.start();
     }
 
     private start () {
         hero$.load();
-
-        ticker$.start();
     }
 
     public close () {

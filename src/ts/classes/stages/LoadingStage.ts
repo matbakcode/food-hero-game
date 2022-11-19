@@ -3,8 +3,9 @@ import app$ from "../../app";
 import {Assets, Text} from "pixi.js";
 import stageManager$ from "../../stageManager";
 import {MenuStage} from "./MenuStage";
-import {assetsManifest} from "../../../assets";
+import {assetsManifest, sfx} from "../../../assets";
 import {GameStage} from "./GameStage";
+import {sound} from "@pixi/sound";
 
 export class LoadingStage extends Stage {
 
@@ -46,6 +47,8 @@ export class LoadingStage extends Stage {
 
     private async loadAssets () {
         await Assets.init({ manifest: assetsManifest });
+        await sound.add("mainTheme", sfx.mainTheme);
+        await sound.add("fantasyButton", sfx.fantasyButton);
     }
 
     private async onFinish () {

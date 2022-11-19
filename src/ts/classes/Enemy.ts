@@ -3,6 +3,8 @@ import app from "../app";
 import {getRandomNumber} from "../helpers/randomRange";
 import app$ from "../app";
 import hero$ from "../hero";
+import state$ from "../state";
+import statistics$ from "../statistics";
 
 export class Enemy {
 
@@ -10,6 +12,7 @@ export class Enemy {
     item: Sprite;
     ticker: Ticker;
     rotationSpeed: number;
+    downSpeed: number;
 
     constructor() {
         this.texture = Assets.get("food");
@@ -20,7 +23,8 @@ export class Enemy {
 
     private render () {
         this.rotationSpeed = getRandomNumber(0, 0.15);
-        const positionX = getRandomNumber(0, app$.screen.width-64);
+        this.downSpeed = Math.floor(getRandomNumber(2, 6));
+        const positionX = getRandomNumber(32, app$.screen.width-32);
         const spriteCordsX = Math.floor(getRandomNumber(0,7));
         const spriteCordsY = Math.floor(getRandomNumber(0,7));
         const frame = new Rectangle(spriteCordsX*64, spriteCordsY*64, 64, 64);
@@ -41,7 +45,7 @@ export class Enemy {
     public run() {
         this.ticker = new Ticker();
         this.ticker.add((delta) => {
-            this.item.y += 3;
+            this.item.y += this.downSpeed;
             this.item.rotation += this.rotationSpeed;
             this.item.anchor.set(0.5);
             this.detectionCollisionWithGround();
@@ -59,16 +63,19 @@ export class Enemy {
     private detectionCollisionWithHero () {
         if (
             this.item.getBounds().intersects(
-                hero$.get().getBounds()
+                hero$.getBoundsCollision()
             )
         ) {
             this.destroy();
+
         }
     }
 
     private destroy () {
         this.ticker.destroy();
         this.item.destroy();
+        state$.addScore();
+        statistics$.refresh();
 
     }
 
@@ -76,6 +83,8 @@ export class Enemy {
         this.item.height = 12;
         this.item.rotation = 0;
         this.ticker.destroy();
+        state$.loseLife();
+        statistics$.refresh();
     }
 }
 

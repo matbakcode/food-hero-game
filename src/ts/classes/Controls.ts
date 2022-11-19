@@ -10,7 +10,9 @@ export class Controls {
 
     private events () {
         const left = keyboard(37),
-            right = keyboard(39);
+            right = keyboard(39),
+            space = keyboard(32)
+        ;
 
         left.press = () => {
             state.setIsMoving(true);
@@ -40,5 +42,11 @@ export class Controls {
                 MovementVector.FRONT
             )
         };
+        space.press = () => {
+            state.setTurnOnBoost();
+        }
+        space.release = () => {
+            state.setTurnOffBoost();
+        }
     }
 }

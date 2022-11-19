@@ -10,10 +10,16 @@ export interface StateInterface {
         width: number,
         height: number,
     },
+    boost: boolean;
     controls: {
         speed: number,
         isMoving: boolean,
         vector: MovementVector,
+    },
+    player: {
+        score: number,
+        life: number,
+        boost: number,
     }
 }
 
@@ -23,10 +29,16 @@ export const initialState = <StateInterface>{
         width: 1200,
         height: 800,
     },
+    boost: false,
     controls: {
         speed: 3,
         isMoving: false,
         vector: MovementVector.FRONT,
+    },
+    player: {
+        score: 0,
+        life: 10,
+        boost: 100,
     }
 };
 
@@ -65,6 +77,35 @@ export class State {
 
     public getStageCurrent (): Stage {
         return this.state.stage.current;
+    }
+
+    public setTurnOnBoost () {
+        this.state.boost = true;
+    }
+
+    public setTurnOffBoost () {
+        this.state.boost = false;
+    }
+
+    public getBoost () {
+        return this.state.boost && this.state.player.boost > 0;
+    }
+
+    public useBoost () {
+        this.state.player.boost -= 1;
+    }
+
+    public loseLife () {
+        this.state.player.life -= 1;
+    }
+
+    public addScore () {
+        this.state.player.score += 1;
+
+        if (this.state.player.boost < 100) {
+            this.state.player.boost += 10;
+            if (this.state.player.boost > 100) this.state.player.boost = 100;
+        }
     }
 }
 

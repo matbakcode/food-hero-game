@@ -1,8 +1,10 @@
 import {Stage} from "./Stage";
 import app$ from "../../app";
-import {Sprite} from "pixi.js";
+import {Assets, Sprite} from "pixi.js";
 import stageManager$ from "../../stageManager";
 import {GameStage} from "./GameStage";
+import {sfx} from "../../../assets";
+
 
 export class MenuStage extends Stage {
 
@@ -11,15 +13,17 @@ export class MenuStage extends Stage {
     }
 
     private start () {
-        const backgroundSprite = new Sprite(this.textures.background);
+        sfx.mainTheme.volume = 0.7;
+        sfx.mainTheme.play();
+        const backgroundSprite = new Sprite(this.textures.introBackground);
         backgroundSprite.x = 0;
         backgroundSprite.y = 0;
         app$.stage.addChild(
             backgroundSprite
         );
         const buttonStart = new Sprite(this.textures.start);
-        buttonStart.x = 180;
-        buttonStart.y = 650;
+        buttonStart.x = 280;
+        buttonStart.y = 464;
         buttonStart.anchor.set(0.5);
 
         buttonStart.interactive = true;
@@ -42,13 +46,11 @@ export class MenuStage extends Stage {
     }
 
     private onButtonDown (button: Sprite) {
+        sfx.fantasyButton.play();
+        sfx.mainTheme.stop();
         stageManager$.change(
             new GameStage()
         )
-    }
-
-    public close () {
-        console.log("Close Menu");
     }
 
 }
