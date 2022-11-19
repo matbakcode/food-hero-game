@@ -1,9 +1,9 @@
 import { Ticker } from 'pixi.js';
 
-const ticker = Ticker.shared;
+const ticker$ = Ticker.shared;
 
-ticker.autoStart = false;
+ticker$.autoStart = false;
 
-ticker.stop();
+ticker$.stop();
 
-export default ticker;
+export default ticker$;

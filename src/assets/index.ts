@@ -1,30 +1,66 @@
-// @ts-ignore
 import heroFront from './images/hero/front/*.png';
-// @ts-ignore
 import heroRight from './images/hero/right/*.png';
-// @ts-ignore
 import heroLeft from './images/hero/left/*.png';
-// @ts-ignore
 import worldGrass from './images/world/ground/grass.png';
-// @ts-ignore
 import food from './images/food/sprite.png';
+import introBg from './images/intro/intro.png';
+import introUiStart from './images/intro/start.png';
 
-const textureHero = {
-    front: Object.values(heroFront),
-    right: Object.values(heroRight),
-    left: Object.values(heroLeft),
+export const assetsManifest = {
+    bundles: [
+        {
+            name: 'intro',
+            assets: [
+                {
+                    name: 'start',
+                    srcs: introUiStart,
+                },
+                {
+                    name: 'background',
+                    srcs: introBg,
+                },
+            ],
+        },
+        {
+            name: 'world',
+            assets: [
+                {
+                    name: 'grass',
+                    srcs: worldGrass,
+                },
+            ],
+        },
+        {
+            name: 'game',
+            assets: [
+                {
+                    name: 'food',
+                    srcs: food,
+                },
+            ],
+        },
+        {
+            name: 'hero',
+            assets: [
+                {
+                    name: 'front',
+                    srcs: Object.values(heroFront) as Array<string>,
+                },
+                {
+                    name: 'left',
+                    srcs: Object.values(heroLeft) as Array<string>,
+                },
+                {
+                    name: 'right',
+                    srcs: Object.values(heroRight) as Array<string>,
+                },
+            ]
+        }
+    ],
 };
 
-const textureWorld = {
-    grass: worldGrass,
-}
-
-const textureFood = {
-    food: food,
-}
-
-export {
-    textureHero,
-    textureWorld,
-    textureFood,
+export const heroTextures = {
+    front: Object.values(heroFront),
+    left: Object.values(heroLeft),
+    right: Object.values(heroRight),
 }

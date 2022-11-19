@@ -12,6 +12,7 @@
   "author": "Mateusz Bak",
   "license": "MIT",
   "dependencies": {
+    "gsap": "^3.11.3",
     "pixi.js": "~7.0.4"
   },
   "devDependencies": {

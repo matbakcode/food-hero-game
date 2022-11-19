@@ -1,5 +1,5 @@
 import {Hero} from "./classes/Hero";
 
-const hero = new Hero();
+const hero$ = new Hero();
 
-export default hero;
+export default hero$;

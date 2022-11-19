@@ -1,56 +1,67 @@
-import {textureHero} from "../../assets";
-import assets from "../assets";
 import * as PIXI from "pixi.js";
 import app from "../app";
 import ticker from "../ticker";
 import state from "../state";
 import {MovementVector} from "./State";
+import {Assets, Resource, Texture} from "pixi.js";
+import {heroTextures} from "../../assets";
+import app$ from "../app";
 
 
 export class Hero {
 
-    player: PIXI.AnimatedSprite = new PIXI.AnimatedSprite(textureHero[MovementVector.FRONT].map(path => PIXI.Texture.from(path as string)));
+    player: PIXI.AnimatedSprite;
+    textures: {
+        [key in MovementVector]?: Texture<Resource>[]
+    };
 
-    constructor () {
-        this.loadHeroSprite();
+    constructor() {
+
     }
 
-    private loadHeroSprite () {
-        Object.keys(textureHero).forEach(key => {
-            assets.add(
-                textureHero[key]
-            )
+    public load () {
+        Assets.loadBundle("hero").then(() => {
+            this.textures = {
+                [MovementVector.FRONT]: heroTextures[MovementVector.FRONT].map(path => PIXI.Texture.from(path as string)),
+                [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => PIXI.Texture.from(path as string)),
+                [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => PIXI.Texture.from(path as string)),
+                [MovementVector.RIGHT]: heroTextures[MovementVector.RIGHT].map(path => PIXI.Texture.from(path as string)),
+            };
+            this.render();
         });
     }
 
-    public render ({
-        x, y
-                   }: {
-        x: number,
-        y: number
-    }) {
-            this.player.x = x;
-            this.player.y = y;
-            this.player.anchor.set(0.5,1);
-            this.player.animationSpeed = 0.2;
-            // this.player.play();
+    public get () {
+        return this.player;
+    }
 
-            app.stage.addChild(this.player);
+    public render () {
 
-            ticker.add((delta) => {
-                if (state.getControlsIsMoving()) {
-                   if (state.getControlsVector() === MovementVector.LEFT) {
-                       this.move({
-                           x: -3
-                       });
-                   }
-                    if (state.getControlsVector() === MovementVector.RIGHT) {
-                        this.move({
-                            x: 3
-                        });
-                    }
+        console.log(this.textures);
+
+        this.player = new PIXI.AnimatedSprite(this.textures.front);
+        this.player.x = app$.screen.width/2;
+        this.player.y = app$.screen.height - 48;
+        this.player.anchor.set(0.5,1);
+        this.player.animationSpeed = 0.2;
+        this.player.play();
+
+        app.stage.addChild(this.player);
+
+        ticker.add((delta) => {
+            if (state.getControlsIsMoving()) {
+               if (state.getControlsVector() === MovementVector.LEFT) {
+                   this.move({
+                       x: -3
+                   });
+               }
+                if (state.getControlsVector() === MovementVector.RIGHT) {
+                    this.move({
+                        x: 3
+                    });
                 }
-            });
+            }
+        });
     }
 
     public move ({ x = 0, y = 0 }: {x?: number, y?: number}) {
@@ -59,7 +70,7 @@ export class Hero {
 
     public changeTextureFromVector (vector: MovementVector) {
         this.player.stop();
-        this.player.textures = textureHero[vector].map(path => PIXI.Texture.from(path as string));
+        this.player.textures = this.textures[vector];
         this.player.play();
     }
 }

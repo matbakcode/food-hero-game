@@ -1,38 +1,39 @@
 import {Stage} from "./Stage";
 import {World} from "../World";
 import {Controls} from "../Controls";
-import assets from "../../assets";
 import {Hero} from "../Hero";
 import ticker from "../../ticker";
 import app$ from "../../app";
+import hero$ from "../../hero";
+import ticker$ from "../../ticker";
+import {Enemies} from "../Enemies";
 
 export class GameStage extends Stage {
-
-    world: World;
-    hero: Hero;
     controls: Controls;
+    world: World;
+    enemies: Enemies;
 
     constructor() {
         super();
-
-        this.world = new World();
-        this.hero = new Hero();
         this.controls = new Controls();
     }
 
     public build () {
         console.log("Build Game");
+        this.world = new World();
+        this.world.build();
 
-        this.renderHero();
+        this.enemies = new Enemies();
+        this.enemies.build();
+
+
+        this.start();
     }
 
-    private renderHero () {
-        assets.onLoad().then(() => {
-            this.world.init();
-            this.hero.render({x: (app$.screen.width / 2), y: (app$.screen.height - 30) });
-            ticker.start();
+    private start () {
+        hero$.load();
 
-        });
+        ticker$.start();
     }
 
     public close () {
