@@ -11,6 +11,10 @@ import uiBoostBar from './images/ui/ui-boostbar.png';
 import uiScore from './images/ui/ui-score.png';
 import mainTheme from './sounds/mainTheme.mp3';
 import fantasyButton from './sounds/fantasyButton.mp3';
+import beep from './sounds/beep.mp3';
+import error from './sounds/error.mp3';
+import gameTheme from './sounds/gameTheme.mp3';
+import punch from './sounds/punch.mp3';
 import {Sound} from "@pixi/sound";
 
 export const assetsManifest = {
@@ -90,6 +94,10 @@ export const assetsManifest = {
 export const sfx = {
     mainTheme: Sound.from(mainTheme),
     fantasyButton: Sound.from(fantasyButton),
+    beep: Sound.from(beep),
+    error: Sound.from(error),
+    gameTheme: Sound.from(gameTheme),
+    punch: Sound.from(punch),
 }
 
 

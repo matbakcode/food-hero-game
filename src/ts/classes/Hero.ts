@@ -17,7 +17,7 @@ export class Hero {
     };
 
     public load () {
-        Assets.loadBundle("hero").then(() => {
+        Assets.loadBundle("hero").then((textures) => {
             this.textures = {
                 [MovementVector.FRONT]: heroTextures[MovementVector.FRONT].map(path => PIXI.Texture.from(path as string)),
                 [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => PIXI.Texture.from(path as string)),
@@ -39,7 +39,7 @@ export class Hero {
         this.player.height = 120;
         this.player.width = 120;
         this.player.anchor.set(0.5,1);
-        this.player.animationSpeed = 0.2;
+        this.player.animationSpeed = 0.1;
         this.player.play();
         this.player.zIndex = 50;
 
@@ -49,28 +49,30 @@ export class Hero {
 
         this.ticker.add((delta) => {
 
-            if (state.getControlsIsMoving()) {
-                const speed = 6 + (state$.getBoost() ? 6 : 0);
+            if (state$.state.player.life > 0) {
+                if (state.getControlsIsMoving()) {
+                    const speed = 6 + (state$.getBoost() ? 6 : 0);
 
-                if (state.getControlsVector() === MovementVector.LEFT) {
-                    if (this.player.getBounds().x > -30) {
-                        this.move({
-                            x: speed * -1
-                        });
-                        if (state$.getBoost()) {
-                            state$.useBoost();
-                            statistics$.refresh();
+                    if (state.getControlsVector() === MovementVector.LEFT) {
+                        if (this.player.getBounds().x > -30) {
+                            this.move({
+                                x: speed * -1
+                            });
+                            if (state$.getBoost()) {
+                                state$.useBoost();
+                                statistics$.refresh();
+                            }
                         }
                     }
-                }
-                if (state.getControlsVector() === MovementVector.RIGHT) {
-                    if ((this.player.getBounds().x + this.player.getBounds().width-30) < app$.screen.width) {
-                        this.move({
-                            x: speed
-                        });
-                        if (state$.getBoost()) {
-                            state$.useBoost();
-                            statistics$.refresh();
+                    if (state.getControlsVector() === MovementVector.RIGHT) {
+                        if ((this.player.getBounds().x + this.player.getBounds().width-30) < app$.screen.width) {
+                            this.move({
+                                x: speed
+                            });
+                            if (state$.getBoost()) {
+                                state$.useBoost();
+                                statistics$.refresh();
+                            }
                         }
                     }
                 }

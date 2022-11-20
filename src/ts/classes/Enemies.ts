@@ -3,6 +3,8 @@ import app from "../app";
 import {StageTextures} from "../interfaces";
 import {Enemy} from "./Enemy";
 import {getRandomNumber} from "../helpers/randomRange";
+import state$ from "../state";
+import {sfx} from "../../assets";
 
 export class Enemies {
 
@@ -39,8 +41,22 @@ export class Enemies {
         window.setTimeout(() => {
             const enemy = new Enemy();
             this.stack.push(enemy);
-            this.create();
+
+            if (state$.state.player.life > 0) {
+                this.create();
+            } else {
+                this.gameOver();
+            }
+
         }, time);
+    }
+
+    private gameOver () {
+        sfx.error.play();
+        sfx.gameTheme.stop();
+        this.stack.forEach((enemy) => {
+            enemy.ticker.stop();
+        });
     }
 
     private fruits () {

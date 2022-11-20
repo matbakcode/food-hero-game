@@ -4,6 +4,7 @@ import {Controls} from "../Controls";
 import hero$ from "../../hero";
 import {Enemies} from "../Enemies";
 import statistics$ from "../../statistics";
+import {sfx} from "../../../assets";
 
 export class GameStage extends Stage {
     controls: Controls;
@@ -34,6 +35,9 @@ export class GameStage extends Stage {
     }
 
     private start () {
+        sfx.gameTheme.play({
+            loop: true
+        });
         hero$.load();
     }
 

@@ -5,6 +5,7 @@ import app$ from "../app";
 import hero$ from "../hero";
 import state$ from "../state";
 import statistics$ from "../statistics";
+import {sfx} from "../../assets";
 
 export class Enemy {
 
@@ -76,15 +77,17 @@ export class Enemy {
         this.item.destroy();
         state$.addScore();
         statistics$.refresh();
+        sfx.beep.play();
 
     }
 
     private smash () {
-        this.item.height = 12;
+        this.item.height = 16;
         this.item.rotation = 0;
         this.ticker.destroy();
         state$.loseLife();
         statistics$.refresh();
+        sfx.punch.play();
     }
 }
 

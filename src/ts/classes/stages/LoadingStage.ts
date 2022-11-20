@@ -49,12 +49,16 @@ export class LoadingStage extends Stage {
         await Assets.init({ manifest: assetsManifest });
         await sound.add("mainTheme", sfx.mainTheme);
         await sound.add("fantasyButton", sfx.fantasyButton);
+        await sound.add("error", sfx.error);
+        await sound.add("beep", sfx.beep);
+        await sound.add("gameTheme", sfx.gameTheme);
+        await sound.add("punch", sfx.punch);
     }
 
     private async onFinish () {
         stageManager$.change(
-            // new MenuStage()
-            new GameStage()
+            new MenuStage()
+            // new GameStage()
         )
     }
 

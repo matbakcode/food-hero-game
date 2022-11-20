@@ -14,7 +14,9 @@ export class MenuStage extends Stage {
 
     private start () {
         sfx.mainTheme.volume = 0.7;
-        sfx.mainTheme.play();
+        sfx.mainTheme.play({
+            loop: true
+        });
         const backgroundSprite = new Sprite(this.textures.introBackground);
         backgroundSprite.x = 0;
         backgroundSprite.y = 0;
