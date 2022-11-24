@@ -1,11 +1,8 @@
 import {Stage} from "./Stage";
-import app$ from "../../app";
 import {Assets, Text} from "pixi.js";
-import stageManager$ from "../../stageManager";
-import {MenuStage} from "./MenuStage";
 import {assetsManifest, sfx} from "../../../assets";
-import {GameStage} from "./GameStage";
 import {sound} from "@pixi/sound";
+import {Game} from "../Game";
 
 export class LoadingStage extends Stage {
 
@@ -13,39 +10,28 @@ export class LoadingStage extends Stage {
         progress: number,
     }
 
-    constructor() {
-        super();
+    constructor(game: Game, nextCallback?: Function) {
+        super(game, nextCallback);
 
         this.state = {
-            progress: 0
+            progress: 0 // is too fast :)
         };
     }
 
-    public build () {
+    public init () {
         console.log("Build Loading");
-        const text = new Text('LOADING...', {
-            fontFamily: 'Arial',
-            fontSize: 16,
-            fill: "white",
-            align: 'center',
-            letterSpacing: 6,
-        });
 
-        text.anchor.set(0.5);
-        text.x = app$.screen.width/2;
-        text.y = app$.screen.height/2;
+        this.renderLoadingInterface();
 
-        app$.stage.addChild(
-            text
-        );
-
-        this.loadAssets().then(() => {
-            this.onFinish();
+        this.addAssets().then(() => {
+            window.setTimeout(() => {
+                super.next();
+            }, 2000);
         });
 
     }
 
-    private async loadAssets () {
+    private async addAssets () {
         await Assets.init({ manifest: assetsManifest });
         await sound.add("mainTheme", sfx.mainTheme);
         await sound.add("fantasyButton", sfx.fantasyButton);
@@ -55,14 +41,23 @@ export class LoadingStage extends Stage {
         await sound.add("punch", sfx.punch);
     }
 
-    private async onFinish () {
-        stageManager$.change(
-            new MenuStage()
-            // new GameStage()
-        )
-    }
 
-    public close () {
-        console.log("Close Loading");
+
+    private renderLoadingInterface () {
+        const text = new Text('LOADING...', {
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fill: "white",
+            align: 'center',
+            letterSpacing: 6,
+        });
+
+        text.anchor.set(0.5);
+        text.x = this.game.app.screen.width/2;
+        text.y = this.game.app.screen.height/2;
+
+        this.game.app.stage.addChild(
+            text
+        );
     }
 }

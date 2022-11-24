@@ -1,44 +1,60 @@
 import {Stage} from "./Stage";
 import {World} from "../World";
 import {Controls} from "../Controls";
-import hero$ from "../../hero";
 import {Enemies} from "../Enemies";
-import statistics$ from "../../statistics";
 import {sfx} from "../../../assets";
+import {Game} from "../Game";
+import {Hero} from "../Hero";
+import {Statistics} from "../Statistics";
 
 export class GameStage extends Stage {
+    hero: Hero;
     controls: Controls;
     world: World;
-    enemies: Enemies;
+    enemies?: Enemies;
+    statistics?: Statistics;
 
-    constructor() {
-        super();
-        this.controls = new Controls();
+    constructor(game: Game) {
+        super(game);
     }
 
-    public build () {
-        console.log("Build Game");
+    public init () {
 
-        this.world = new World();
+        this.hero = new Hero(this.game);
+        this.hero.setPosition(
+            this.game.app.screen.width/2,
+            this.game.app.screen.height - 46
+        );
+
+        this.world = new World(this.game);
         this.world.build().then(() => {
 
-            this.enemies = new Enemies();
+            this.statistics = new Statistics(this.game);
+
+            this.world.add(
+                this.hero.get()
+            );
+            this.hero.init();
+
+            this.enemies = new Enemies(this.game, this.hero, this.statistics);
             this.enemies.build();
 
-            statistics$.build();
+            this.statistics.build();
+            this.hero.refreshCallback = () => {
+                this.statistics?.refresh();
+            };
+
+            this.controls = new Controls(this.game, this.hero);
 
             this.start();
 
         });
-
-
     }
 
-    private start () {
+    public start () {
         sfx.gameTheme.play({
             loop: true
         });
-        hero$.load();
     }
 
     public close () {

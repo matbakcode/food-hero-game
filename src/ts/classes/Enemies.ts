@@ -1,16 +1,16 @@
-import {Container, Sprite, Assets, TilingSprite, Rectangle, Texture} from "pixi.js";
-import app from "../app";
-import {StageTextures} from "../interfaces";
+import {Assets,} from "pixi.js";
 import {Enemy} from "./Enemy";
 import {getRandomNumber} from "../helpers/randomRange";
-import state$ from "../state";
 import {sfx} from "../../assets";
+import {Game} from "./Game";
+import {Hero} from "./Hero";
+import {Statistics} from "./Statistics";
 
 export class Enemies {
 
     stack : Array<Enemy>;
 
-    constructor() {
+    constructor(private game: Game, private hero: Hero, private statistics: Statistics) {
         this.stack = [];
     }
 
@@ -32,17 +32,16 @@ export class Enemies {
     }
 
     private enemiesCreator () {
-        const frequency = 0.5;
         this.create();
     }
 
     private create () {
         const time = getRandomNumber(800, 2000);
         window.setTimeout(() => {
-            const enemy = new Enemy();
+            const enemy = new Enemy(this.game, this.hero, this.statistics);
             this.stack.push(enemy);
 
-            if (state$.state.player.life > 0) {
+            if (this.game.state.playerLife > 0) {
                 this.create();
             } else {
                 this.gameOver();
@@ -57,10 +56,6 @@ export class Enemies {
         this.stack.forEach((enemy) => {
             enemy.ticker.stop();
         });
-    }
-
-    private fruits () {
-
     }
 }
 

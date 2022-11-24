@@ -1,9 +1,14 @@
-import {Assets} from "pixi.js";
+import {Game} from "../Game";
 import {StageTextures} from "../../interfaces";
+import {Assets} from "pixi.js";
 
 export class Stage {
 
     textures: StageTextures;
+
+    constructor(protected game: Game, protected nextCallback?: Function) {}
+
+    public init () {}
 
     protected load (bundle: string) {
         console.log("Load stage textures")
@@ -12,11 +17,11 @@ export class Stage {
         });
     }
 
-    public close () {
-        console.log("Open")
-    }
+    public stop () {}
 
-    public build () {
-
+    protected next () {
+        if (this.nextCallback) {
+            this.nextCallback();
+        }
     }
 }

@@ -1,31 +1,32 @@
 import {Assets, Rectangle, Resource, Sprite, Texture, Ticker} from "pixi.js";
-import app from "../app";
 import {getRandomNumber} from "../helpers/randomRange";
-import app$ from "../app";
-import hero$ from "../hero";
-import state$ from "../state";
-import statistics$ from "../statistics";
 import {sfx} from "../../assets";
+import {Game} from "./Game";
+import {Hero} from "./Hero";
+import {Statistics} from "./Statistics";
 
 export class Enemy {
 
     texture: Texture<Resource> | Record<string, Texture<Resource>>;
-    item: Sprite;
+    item?: Sprite;
     ticker: Ticker;
     rotationSpeed: number;
     downSpeed: number;
 
-    constructor() {
+    constructor(private game: Game, private hero: Hero, private statistics: Statistics)
+    {
+        this.ticker = new Ticker();
         this.texture = Assets.get("food");
+        this.rotationSpeed = getRandomNumber(0, 0.15);
+        this.downSpeed = Math.floor(getRandomNumber(2, 6));
         if (this.texture) {
             this.render();
         }
     }
 
     private render () {
-        this.rotationSpeed = getRandomNumber(0, 0.15);
-        this.downSpeed = Math.floor(getRandomNumber(2, 6));
-        const positionX = getRandomNumber(32, app$.screen.width-32);
+
+        const positionX = getRandomNumber(32, this.game.app.screen.width-32);
         const spriteCordsX = Math.floor(getRandomNumber(0,7));
         const spriteCordsY = Math.floor(getRandomNumber(0,7));
         const frame = new Rectangle(spriteCordsX*64, spriteCordsY*64, 64, 64);
@@ -36,7 +37,7 @@ export class Enemy {
         this.item.height = 64;
         this.item.x = positionX;
         this.item.y = -64;
-        app.stage.addChild(
+        this.game.app.stage.addChild(
             this.item
         );
 
@@ -44,50 +45,64 @@ export class Enemy {
     }
 
     public run() {
-        this.ticker = new Ticker();
-        this.ticker.add((delta) => {
-            this.item.y += this.downSpeed;
-            this.item.rotation += this.rotationSpeed;
-            this.item.anchor.set(0.5);
-            this.detectionCollisionWithGround();
-            this.detectionCollisionWithHero();
+        this.ticker.add(() => {
+            if (this.item) {
+                this.item.y += this.downSpeed;
+                this.item.rotation += this.rotationSpeed;
+                this.item.anchor.set(0.5);
+                this.detectionCollisionWithGround();
+                this.detectionCollisionWithHero();
+            }
+
         });
         this.ticker.start();
+
     }
 
     private detectionCollisionWithGround () {
-        if (this.item.y > app$.screen.height - 48) {
-            this.smash();
+        if (this.item) {
+            if (this.item.y > this.game.app.screen.height - 48) {
+                this.smash();
+            }
         }
+
     }
 
     private detectionCollisionWithHero () {
-        if (
-            this.item.getBounds().intersects(
-                hero$.getBoundsCollision()
-            )
-        ) {
-            this.destroy();
+        if (this.item) {
+            if (
+                this.item.getBounds().intersects(
+                    this.hero.getBoundsCollision()
+                )
+            ) {
+                this.destroy();
 
+            }
         }
+
     }
 
     private destroy () {
         this.ticker.destroy();
-        this.item.destroy();
-        state$.addScore();
-        statistics$.refresh();
+        if (this.item) {
+            this.item.destroy();
+        }
+        this.game.state.playerAddScore();
+        this.statistics.refresh();
         sfx.beep.play();
 
     }
 
     private smash () {
-        this.item.height = 16;
-        this.item.rotation = 0;
-        this.ticker.destroy();
-        state$.loseLife();
-        statistics$.refresh();
-        sfx.punch.play();
+        if (this.item) {
+            this.item.height = 16;
+            this.item.rotation = 0;
+            this.ticker.destroy();
+            this.game.state.playerLoseLife();
+            this.statistics.refresh();
+            sfx.punch.play();
+        }
+
     }
 }
 

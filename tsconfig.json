@@ -7,15 +7,27 @@
         "target": "es6",
         "sourceMap": true,
         "allowJs": true,
-        "lib": [
-            "es2017",
-            "dom"
-        ],
-        "types": [
-        ],
+        "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+        "types": ["reflect-metadata", "node"],
         "typeRoots": [
             "node_modules/@types"
-        ]
+        ],
+        "skipLibCheck": true,
+        "removeComments": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "resolveJsonModule": true,
+        "strictPropertyInitialization": false,
     },
     "include": [
         "src/**/*.ts",

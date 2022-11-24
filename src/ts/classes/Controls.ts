@@ -1,10 +1,11 @@
 import {keyboard} from "../helpers/keyboard";
-import state from "../state";
-import {MovementVector} from "./State";
-import hero from "../hero";
+
+import {Game} from "./Game";
+import {MovementVector} from "../interfaces";
+import {Hero} from "./Hero";
 
 export class Controls {
-    constructor() {
+    constructor(private game: Game, private hero: Hero) {
         this.events();
     }
 
@@ -15,38 +16,33 @@ export class Controls {
         ;
 
         left.press = () => {
-            state.setIsMoving(true);
-            hero.changeTextureFromVector(MovementVector.LEFT);
-            state.setControlVector(
-                MovementVector.LEFT
-            )
+            this.game.state.controlsIsMoving = true;
+            this.hero.changeTextureFromVector(MovementVector.LEFT);
+            this.game.state.controlVector = MovementVector.LEFT
+
         };
         left.release = () => {
-            state.setIsMoving(false);
-            hero.changeTextureFromVector(MovementVector.FRONT);
-            state.setControlVector(
-                MovementVector.FRONT
-            )
+            this.game.state.controlsIsMoving = true;
+            this.hero.changeTextureFromVector(MovementVector.FRONT);
+            this.game.state.controlVector = MovementVector.FRONT
+
         };
         right.press = () => {
-            state.setIsMoving(true);
-            hero.changeTextureFromVector(MovementVector.RIGHT);
-            state.setControlVector(
-                MovementVector.RIGHT
-            )
+            this.game.state.controlsIsMoving = true;
+            this.hero.changeTextureFromVector(MovementVector.RIGHT);
+            this.game.state.controlVector = MovementVector.RIGHT
+
         };
         right.release = () => {
-            state.setIsMoving(false);
-            hero.changeTextureFromVector(MovementVector.FRONT);
-            state.setControlVector(
-                MovementVector.FRONT
-            )
+            this.game.state.controlsIsMoving = true;
+            this.hero.changeTextureFromVector(MovementVector.FRONT);
+            this.game.state.controlVector = MovementVector.FRONT
         };
         space.press = () => {
-            state.setTurnOnBoost();
+            this.game.state.playerTurnBoost = true;
         }
         space.release = () => {
-            state.setTurnOffBoost();
+            this.game.state.playerTurnBoost = false;
         }
     }
 }

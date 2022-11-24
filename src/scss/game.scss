@@ -7,4 +7,20 @@ body {
 
 canvas {
     display:block;
+    border: 2px solid brown;
+}
+.gamePlace {
+    display: flex;
+    justify-content: center;
+}
+.firstInteraction {
+    margin: 20px auto;
+    display: block;
+}
+.info {
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    font-family: sans-serif;
+    opacity: 0.3;
 }

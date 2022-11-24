@@ -1,34 +1,31 @@
-import {LoadingStage} from "./stages/LoadingStage";
-import state$ from "../state";
-import app$ from "../app";
-import {MenuStage} from "./stages/MenuStage";
 import {Stage} from "./stages/Stage";
+import {Game, STAGES} from "./Game";
+
+
 
 export class StageManager {
 
+    constructor(
+        private stages: {
+            [key: string]: Stage
+        },
+        private game: Game,
+    ) {}
 
-    constructor () {
+    run (stage: STAGES) {
+        if (this.stages[stage]) {
+            const currentStage = this.game.state.stageCurrent;
 
-    }
+            if (currentStage !== undefined) {
+                currentStage.stop();
+            }
 
-    public async change (stage: Stage) {
+            this.game.app.stage.removeChildren();
 
-        const currentStage = state$.getStageCurrent();
+            this.game.state.stageCurrent = this.stages[stage];
 
-
-        if (currentStage !== undefined) {
-            await currentStage.close();
+            this.game.state.stageCurrent.init();
         }
-
-        app$.stage.removeChildren();
-
-
-        state$.setSceneCurrent(
-            stage
-        );
-
-        stage.build();
-
     }
 
 }

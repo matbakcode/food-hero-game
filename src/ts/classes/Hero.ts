@@ -1,31 +1,38 @@
-import * as PIXI from "pixi.js";
-import app from "../app";
-import state from "../state";
-import {MovementVector} from "./State";
-import {Assets, Rectangle, Resource, Texture, Ticker} from "pixi.js";
+import {MovementVector} from "../interfaces";
+import {AnimatedSprite, Rectangle, Texture, Ticker} from "pixi.js";
 import {heroTextures} from "../../assets";
-import app$ from "../app";
-import state$ from "../state";
-import statistics$ from "../statistics";
+import {Game} from "./Game";
 
 
 export class Hero {
-    ticker: Ticker;
-    player: PIXI.AnimatedSprite;
-    textures: {
-        [key in MovementVector]?: Texture<Resource>[]
+    private ticker = new Ticker();
+    private readonly player: AnimatedSprite;
+    private textures = {
+        [MovementVector.FRONT]: heroTextures[MovementVector.FRONT].map(path => Texture.from(path as string)),
+        [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => Texture.from(path as string)),
+        [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => Texture.from(path as string)),
+        [MovementVector.RIGHT]: heroTextures[MovementVector.RIGHT].map(path => Texture.from(path as string)),
     };
+    refresh: Function = () => {}
 
-    public load () {
-        Assets.loadBundle("hero").then((textures) => {
-            this.textures = {
-                [MovementVector.FRONT]: heroTextures[MovementVector.FRONT].map(path => PIXI.Texture.from(path as string)),
-                [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => PIXI.Texture.from(path as string)),
-                [MovementVector.LEFT]: heroTextures[MovementVector.LEFT].map(path => PIXI.Texture.from(path as string)),
-                [MovementVector.RIGHT]: heroTextures[MovementVector.RIGHT].map(path => PIXI.Texture.from(path as string)),
-            };
-            this.render();
-        });
+    constructor (private game: Game) {
+        this.player = new AnimatedSprite(this.textures[MovementVector.FRONT]);
+        this.player.height = 120;
+        this.player.width = 120;
+        this.player.anchor.set(0.5,1);
+        this.player.animationSpeed = 0.1;
+        this.player.play();
+        this.player.zIndex = 50;
+    }
+
+
+    public init () {
+        this.render();
+    }
+
+    public setPosition (x: number = 0, y: number = 0) {
+        this.player.x = x;
+        this.player.y = y;
     }
 
     public get () {
@@ -33,45 +40,35 @@ export class Hero {
     }
 
     public render () {
-        this.player = new PIXI.AnimatedSprite(this.textures.front);
-        this.player.x = app$.screen.width/2;
-        this.player.y = app$.screen.height - 46;
-        this.player.height = 120;
-        this.player.width = 120;
-        this.player.anchor.set(0.5,1);
-        this.player.animationSpeed = 0.1;
-        this.player.play();
-        this.player.zIndex = 50;
 
-        app.stage.addChild(this.player);
 
         this.ticker = new Ticker();
 
-        this.ticker.add((delta) => {
+        this.ticker.add(() => {
 
-            if (state$.state.player.life > 0) {
-                if (state.getControlsIsMoving()) {
-                    const speed = 6 + (state$.getBoost() ? 6 : 0);
+            if (this.game.state.playerLife > 0) {
+                if (this.game.state.controlsIsMoving) {
+                    const speed = 6 + (this.game.state.withBoost && this.game.state.playerIsBoostExist ? 6 : 0);
 
-                    if (state.getControlsVector() === MovementVector.LEFT) {
+                    if (this.game.state.controlsVector === MovementVector.LEFT) {
                         if (this.player.getBounds().x > -30) {
                             this.move({
                                 x: speed * -1
                             });
-                            if (state$.getBoost()) {
-                                state$.useBoost();
-                                statistics$.refresh();
+                            if (this.game.state.withBoost) {
+                                this.game.state.playerUsingBoost();
+                                this.refresh();
                             }
                         }
                     }
-                    if (state.getControlsVector() === MovementVector.RIGHT) {
-                        if ((this.player.getBounds().x + this.player.getBounds().width-30) < app$.screen.width) {
+                    if (this.game.state.controlsVector === MovementVector.RIGHT) {
+                        if ((this.player.getBounds().x + this.player.getBounds().width-30) < this.game.app.screen.width) {
                             this.move({
                                 x: speed
                             });
-                            if (state$.getBoost()) {
-                                state$.useBoost();
-                                statistics$.refresh();
+                            if (this.game.state.withBoost) {
+                                this.game.state.playerUsingBoost();
+                                this.refresh();
                             }
                         }
                     }
@@ -82,13 +79,17 @@ export class Hero {
         this.ticker.start();
     }
 
-    public move ({ x = 0, y = 0 }: {x?: number, y?: number}) {
+    public set refreshCallback (refresh: Function) {
+        this.refresh = refresh;
+    }
+
+    public move ({ x = 0}: {x?: number, y?: number}) {
         this.player.x += x;
     }
 
     public changeTextureFromVector (vector: MovementVector) {
         this.player.stop();
-        this.player.textures = this.textures[vector];
+        this.player.textures = this.textures[vector] ?? [];
         this.player.play();
     }
 

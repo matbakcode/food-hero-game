@@ -1,110 +1,102 @@
 import {Stage} from "./stages/Stage";
-
-export enum MovementVector {
-    LEFT = "left", RIGHT = "right", FRONT = "front"
-}
-
-export interface StateInterface {
-    stage: {
-        current: Stage | undefined,
-        width: number,
-        height: number,
-    },
-    boost: boolean;
-    controls: {
-        speed: number,
-        isMoving: boolean,
-        vector: MovementVector,
-    },
-    player: {
-        score: number,
-        life: number,
-        boost: number,
-    }
-}
+import {CONFIG} from "../config";
+import {MovementVector, StateInterface} from "../interfaces";
 
 export const initialState = <StateInterface>{
     stage: {
         current: undefined,
-        width: 1200,
-        height: 800,
+        width: CONFIG.STAGE_WIDTH,
+        height: CONFIG.STAGE_HEIGHT,
     },
     boost: false,
     controls: {
-        speed: 3,
+        speed: CONFIG.CONTROLS_HERO_SPEED,
         isMoving: false,
         vector: MovementVector.FRONT,
     },
     player: {
         score: 0,
-        life: 10,
-        boost: 100,
+        life: CONFIG.PLAYER_LIFES_MAX,
+        boost: CONFIG.PLAYER_BOOST_MAX,
     }
 };
 
-
 export class State {
 
-    state: StateInterface;
+    constructor(private readonly state: StateInterface = initialState) {}
 
-    constructor(initialState: StateInterface) {
-        this.state = initialState;
-    }
-
-    public get() {
-        return this.state;
-    }
-
-    public setControlVector(vector: MovementVector) {
-        this.state.controls.vector = vector;
-    }
-
-    public setIsMoving(isMoving) {
+    public set controlsIsMoving(isMoving: boolean) {
         this.state.controls.isMoving = isMoving;
     }
 
-    public getControlsIsMoving() {
+    public get controlsIsMoving() {
         return this.state.controls.isMoving;
     }
 
-    public getControlsVector() {
-        return this.state.controls.vector;
-    }
-
-    public setSceneCurrent (stage: Stage) {
-        this.state.stage.current = stage;
-    }
-
-    public getStageCurrent (): Stage {
+    public get stageCurrent (): Stage | undefined {
         return this.state.stage.current;
     }
 
-    public setTurnOnBoost () {
-        this.state.boost = true;
+    public get controlsVector() {
+        return this.state.controls.vector;
     }
 
-    public setTurnOffBoost () {
-        this.state.boost = false;
-    }
-
-    public getBoost () {
+    public get playerIsBoostExist () {
         return this.state.boost && this.state.player.boost > 0;
     }
 
-    public useBoost () {
-        this.state.player.boost -= 1;
+    public get playerScore () {
+        return this.state.player.score;
     }
 
-    public loseLife () {
-        this.state.player.life -= 1;
+    public get playerLife () {
+        return this.state.player.life;
     }
 
-    public addScore () {
-        this.state.player.score += 1;
+    public get playerBoost () {
+        return this.state.player.boost;
+    }
 
-        if (this.state.player.boost < 100) {
-            this.state.player.boost += 10;
-            if (this.state.player.boost > 100) this.state.player.boost = 100;
+    public get withBoost () {
+        return this.state.boost;
+    }
+
+    public set stageCurrent (stage: Stage | undefined) {
+        this.state.stage.current = stage;
+    }
+
+    public get stageWidth () {
+        return this.state.stage.width;
+    }
+
+    public get stageHeight () {
+        return this.state.stage.height;
+    }
+
+    public set controlVector(vector: MovementVector) {
+        this.state.controls.vector = vector;
+    }
+
+    public set playerTurnBoost (isTurn: boolean) {
+        this.state.boost = isTurn;
+    }
+
+    public playerUsingBoost () {
+        this.state.player.boost -= CONFIG.BOOST_DROP_PER_FRAME;
+        if (this.state.player.boost < 0) this.state.player.boost = 0;
+    }
+
+    public playerLoseLife () {
+        this.state.player.life -= CONFIG.SCORE_SINGLE_VALUE;
+    }
+
+    public playerAddScore () {
+        this.state.player.score += CONFIG.SCORE_SINGLE_VALUE;
+
+        if (this.state.player.boost < CONFIG.PLAYER_BOOST_MAX) {
+            this.state.player.boost += CONFIG.BOOST_EXTRA_PER_SCORE;
+            if (this.state.player.boost > CONFIG.PLAYER_BOOST_MAX)
+                this.state.player.boost = CONFIG.PLAYER_BOOST_MAX;
         }
     }
 }
